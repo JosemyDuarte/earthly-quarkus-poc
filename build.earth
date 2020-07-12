@@ -1,0 +1,14 @@
+FROM quay.io/quarkus/centos-quarkus-maven:20.1.0-java11
+
+WORKDIR /java-example
+
+deps:
+    COPY pom.xml ./
+    RUN mvn -B de.qaware.maven:go-offline-maven-plugin:1.2.5:resolve-dependencies
+    SAVE IMAGE
+
+build:
+    FROM +deps
+    COPY src src
+    RUN mvn -Pnative clean package
+    SAVE ARTIFACT target/ /target AS LOCAL target
